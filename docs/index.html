@@ -25,6 +25,19 @@
         .btn svg{width:15px;height:15px;opacity:.7}
         .meta{margin-top:14px;font-size:11px;color:#aaa}
         .line{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.06),transparent)}
+        /* Mockup */
+        .mockup{width:100%;max-width:260px;margin:20px auto 50px}
+        .mock-bar{background:#1a1a1a;border-radius:10px;padding:16px 18px;box-shadow:0 16px 50px rgba(0,0,0,.15);border:1px solid rgba(0,0,0,.08)}
+        .mock-hdr{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06)}
+        .mock-hdr span{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#e0d5c8}
+        .mock-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+        .mock-stat{background:rgba(255,255,255,.04);border-radius:6px;padding:10px 8px;text-align:center}
+        .mock-stat .num{font-size:18px;font-weight:600;color:#d2783c;font-family:'IBM Plex Mono',monospace;display:block}
+        .mock-stat .lbl{font-size:8px;color:#666;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;display:block}
+        .mock-chart{display:flex;align-items:flex-end;gap:2px;height:32px;margin-bottom:8px;padding:0 2px}
+        .mock-chart .bar{flex:1;background:#d2783c;border-radius:1px 1px 0 0;min-height:2px;opacity:.6}
+        .mock-buddy{text-align:center;font-size:9px;color:#555;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)}
+        .mock-buddy .animal{font-size:22px;display:block;margin-bottom:2px}
         .features{width:100%;padding:48px 0;text-align:center}
         .features h2{font-family:'Special Elite',monospace;font-size:14px;color:#999;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
         .g{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
@@ -45,9 +58,27 @@
         <section class="hero">
             <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#d2783c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
             <h1>Know how you <span>type</span></h1>
-            <p class="sub">Tracks keystrokes, words, and WPM throughout the day. Fun summaries. Desktop buddy that evolves with your speed.</p>
+            <p class="sub">Tracks keystrokes, words, and WPM throughout the day. Fun summaries and an evolving desktop buddy.</p>
             <a href="https://github.com/rijo-george/typing-stats/releases/latest" class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download for Mac</a>
             <p class="meta">macOS 14+ &middot; universal &middot; free</p>
+        </section>
+        <section class="mockup">
+            <div class="mock-bar">
+                <div class="mock-hdr"><span>&#9000; Typing Stats</span></div>
+                <div class="mock-stats">
+                    <div class="mock-stat"><span class="num">4,218</span><span class="lbl">keystrokes</span></div>
+                    <div class="mock-stat"><span class="num">72</span><span class="lbl">wpm peak</span></div>
+                </div>
+                <div class="mock-chart">
+                    <div class="bar" style="height:15%"></div><div class="bar" style="height:10%"></div><div class="bar" style="height:25%"></div>
+                    <div class="bar" style="height:40%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:80%"></div>
+                    <div class="bar" style="height:100%"></div><div class="bar" style="height:90%"></div><div class="bar" style="height:70%"></div>
+                    <div class="bar" style="height:55%"></div><div class="bar" style="height:30%"></div><div class="bar" style="height:45%"></div>
+                    <div class="bar" style="height:60%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:20%"></div>
+                    <div class="bar" style="height:50%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:40%"></div>
+                </div>
+                <div class="mock-buddy"><span class="animal">&#128006;</span>Desktop Buddy: Fox</div>
+            </div>
         </section>
         <div class="line"></div>
         <section class="features">
@@ -64,7 +95,7 @@
         <div class="line"></div>
         <section class="about"><p>Menu bar app. No account, no cloud, no tracking. Your typing data stays on your Mac.</p></section>
         <div class="line"></div>
-        <footer><p>made by <a href="https://github.com/rijo-george">rijo</a> &middot; <a href="https://github.com/rijo-george/typing-stats">source</a> &middot; 2026</p></footer>
+        <footer><p>made by <a href="https://github.com/rijo-george">rijo</a> &middot; <a href="https://github.com/rijo-george/typing-stats">github</a> &middot; 2026</p></footer>
     </div>
 </body>
 </html>
