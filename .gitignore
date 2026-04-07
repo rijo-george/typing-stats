@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+build/
+*.dmg
+_dmg_staging/
+_dmg_temp.dmg
+DerivedData/
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# IDE
+.vscode/
+.idea/
+*.swp
