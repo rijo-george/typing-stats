@@ -1,296 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Typing Stats — Know how much you type</title>
-  <meta name="description" content="Track keystrokes, words, and WPM throughout the day. Fun comparisons, 24-hour activity chart, animated desktop buddy, and shareable summary cards. macOS menu bar app.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Stats — Know How You Type</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'IBM Plex Mono','Courier New',monospace;background:#f4efe6;color:#4a3f34;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+        body::before{content:'';position:fixed;inset:0;opacity:.035;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:999}
+        .c{max-width:600px;width:100%;padding:0 24px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+        header{width:100%;display:flex;justify-content:space-between;align-items:center;padding:36px 0 0}
+        .wm{font-family:'Special Elite',monospace;font-size:16px;color:#8a7a68;letter-spacing:2px}
+        header a{font-size:12px;color:#a0937f;text-decoration:none;transition:color .3s}header a:hover{color:#4a3f34}
+        .hero{text-align:center;padding:90px 0 50px}
+        .icon{width:80px;height:80px;margin:0 auto 44px;background:linear-gradient(135deg,#2a1f18,#1a1410);border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 40px rgba(40,30,20,.15)}
+        .icon svg{width:32px;height:32px}
+        h1{font-family:'Special Elite',monospace;font-size:clamp(26px,5vw,38px);font-weight:400;color:#1a1a1a;line-height:1.25;margin-bottom:24px}
+        h1 span{color:#c06830}
+        .sub{font-size:14px;line-height:1.8;color:#888;max-width:400px;margin:0 auto 44px}
+        .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 30px;background:rgba(210,120,60,.08);border:1px solid rgba(210,120,60,.15);border-radius:10px;color:#c06830;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;text-decoration:none;transition:all .3s}
+        .btn:hover{background:rgba(210,120,60,.14);transform:translateY(-1px)}
+        .btn svg{width:15px;height:15px;opacity:.7}
+        .meta{margin-top:14px;font-size:11px;color:#aaa}
+        .line{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.06),transparent)}
+        .features{width:100%;padding:48px 0;text-align:center}
+        .features h2{font-family:'Special Elite',monospace;font-size:14px;color:#999;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+        .g{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+        .chip{padding:14px 12px;border-radius:8px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.04);font-size:11px;color:#888;transition:all .25s}
+        .chip:hover{background:rgba(210,120,60,.06);color:#4a3f34}
+        .chip .e{display:block;font-size:18px;margin-bottom:4px}
+        .about{width:100%;padding:44px 0;text-align:center}
+        .about p{font-size:12px;color:#999;line-height:1.8;max-width:400px;margin:0 auto}
+        footer{width:100%;padding:36px 0;text-align:center}
+        footer p{font-size:11px;color:#bbb}
+        footer a{color:#999;text-decoration:none}footer a:hover{color:#4a3f34}
+        @media(max-width:540px){.hero{padding:60px 0 40px}.g{grid-template-columns:1fr}}
+    </style>
 </head>
 <body>
-
-  <!-- Nav -->
-  <nav class="nav">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo">
-        <span class="nav-icon">&#9000;</span>
-        <span>Typing Stats</span>
-      </a>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#buddy">Buddy</a>
-        <a href="#how">How It Works</a>
-        <a href="#download" class="nav-cta">Download</a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-content">
-      <div class="hero-badge">macOS &middot; Menu Bar App</div>
-      <h1>Know how much you type.<br><span class="gradient-text">Every. Single. Day.</span></h1>
-      <p class="hero-sub">
-        Track keystrokes, words typed, and WPM throughout the day. Get fun end-of-day summaries with comparisons, a 24-hour activity chart, and an animated desktop buddy that types along with you.
-      </p>
-      <div class="hero-actions">
-        <a href="https://github.com/rijo-george/typing-stats/releases/download/v1.0.0/TypingStats-1.0.0.dmg" class="btn btn-primary">
-          <span>Download for Mac</span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <a href="https://github.com/rijo-george/typing-stats" class="btn btn-ghost">
-          <span>View on GitHub</span>
-        </a>
-      </div>
-
-      <!-- Hero visual — menu bar mockup -->
-      <div class="hero-visual">
-        <div class="mockup">
-          <div class="mockup-bar">
-            <div class="mockup-dots">
-              <span class="dot dot-red"></span>
-              <span class="dot dot-yellow"></span>
-              <span class="dot dot-green"></span>
+    <div class="c">
+        <header><div class="wm">typing stats</div><a href="https://github.com/rijo-george/typing-stats">github</a></header>
+        <section class="hero">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#d2783c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+            <h1>Know how you <span>type</span></h1>
+            <p class="sub">Tracks keystrokes, words, and WPM throughout the day. Fun summaries. Desktop buddy that evolves with your speed.</p>
+            <a href="https://github.com/rijo-george/typing-stats/releases/latest" class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download for Mac</a>
+            <p class="meta">macOS 14+ &middot; universal &middot; free</p>
+        </section>
+        <div class="line"></div>
+        <section class="features">
+            <h2>What you get</h2>
+            <div class="g">
+                <div class="chip"><span class="e">&#9000;</span>Live keystroke counter</div>
+                <div class="chip"><span class="e">&#128200;</span>24-hour activity chart</div>
+                <div class="chip"><span class="e">&#127942;</span>WPM tracking</div>
+                <div class="chip"><span class="e">&#128059;</span>Desktop buddy (evolves!)</div>
+                <div class="chip"><span class="e">&#128228;</span>Shareable daily summary</div>
+                <div class="chip"><span class="e">&#128202;</span>Session &amp; lifetime stats</div>
             </div>
-            <span class="mockup-title">Typing Stats</span>
-          </div>
-          <div class="mockup-body">
-            <div class="mock-stats-row">
-              <div class="mock-stat">
-                <div class="mock-stat-value">12,847</div>
-                <div class="mock-stat-label">words</div>
-              </div>
-              <div class="mock-stat">
-                <div class="mock-stat-value">58,392</div>
-                <div class="mock-stat-label">keystrokes</div>
-              </div>
-              <div class="mock-stat">
-                <div class="mock-stat-value mock-accent">72</div>
-                <div class="mock-stat-label">WPM</div>
-              </div>
-              <div class="mock-stat">
-                <div class="mock-stat-value mock-peak">94</div>
-                <div class="mock-stat-label">peak WPM</div>
-              </div>
-            </div>
-            <div class="mock-chart">
-              <div class="mock-chart-label">24h Activity</div>
-              <div class="mock-chart-bars">
-                <div class="mock-bar" style="height:15%"></div>
-                <div class="mock-bar" style="height:8%"></div>
-                <div class="mock-bar" style="height:5%"></div>
-                <div class="mock-bar" style="height:3%"></div>
-                <div class="mock-bar" style="height:2%"></div>
-                <div class="mock-bar" style="height:3%"></div>
-                <div class="mock-bar" style="height:5%"></div>
-                <div class="mock-bar" style="height:12%"></div>
-                <div class="mock-bar mock-bar-active" style="height:45%"></div>
-                <div class="mock-bar mock-bar-active" style="height:72%"></div>
-                <div class="mock-bar mock-bar-active" style="height:88%"></div>
-                <div class="mock-bar mock-bar-active" style="height:65%"></div>
-                <div class="mock-bar mock-bar-active" style="height:55%"></div>
-                <div class="mock-bar mock-bar-active" style="height:78%"></div>
-                <div class="mock-bar mock-bar-active" style="height:92%"></div>
-                <div class="mock-bar mock-bar-active" style="height:85%"></div>
-                <div class="mock-bar mock-bar-active" style="height:60%"></div>
-                <div class="mock-bar mock-bar-active" style="height:40%"></div>
-                <div class="mock-bar" style="height:30%"></div>
-                <div class="mock-bar" style="height:22%"></div>
-                <div class="mock-bar" style="height:18%"></div>
-                <div class="mock-bar" style="height:25%"></div>
-                <div class="mock-bar" style="height:15%"></div>
-                <div class="mock-bar" style="height:8%"></div>
-              </div>
-              <div class="mock-chart-axis">
-                <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span>
-              </div>
-            </div>
-            <div class="mock-comparison">
-              <span class="mock-compare-icon">&#128214;</span>
-              <span>That's <strong>26 pages</strong> of a novel</span>
-            </div>
-            <div class="mock-character">
-              <span class="mock-buddy">&#128007;</span>
-              <span class="mock-buddy-label">Rabbit &middot; 72 WPM</span>
-            </div>
-          </div>
-        </div>
-      </div>
+        </section>
+        <div class="line"></div>
+        <section class="about"><p>Menu bar app. No account, no cloud, no tracking. Your typing data stays on your Mac.</p></section>
+        <div class="line"></div>
+        <footer><p>made by <a href="https://github.com/rijo-george">rijo</a> &middot; <a href="https://github.com/rijo-george/typing-stats">source</a> &middot; 2026</p></footer>
     </div>
-  </section>
-
-  <!-- Features -->
-  <section class="features" id="features">
-    <div class="section-inner">
-      <div class="section-label">Features</div>
-      <h2>Your keyboard has stories.<br><span class="gradient-text">Now you can read them.</span></h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">&#9201;</div>
-          <h3>Real-time WPM</h3>
-          <p>Watch your words-per-minute update live in the menu bar. See exactly how fast you're typing at any moment.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128290;</div>
-          <h3>Word &amp; Keystroke Counting</h3>
-          <p>Every word, every keystroke, counted and tracked throughout the day. Know exactly how productive your fingers have been.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#9889;</div>
-          <h3>Peak WPM Tracking</h3>
-          <p>Your fastest burst is captured and highlighted. Challenge yourself to beat your personal best every day.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128200;</div>
-          <h3>24h Activity Chart</h3>
-          <p>A beautiful hour-by-hour chart shows when you type most. Discover your peak productivity hours at a glance.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128214;</div>
-          <h3>Fun Comparisons</h3>
-          <p>"You typed 12,847 words &mdash; that's 26 pages of a novel." Daily summaries that put your output in perspective.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#127912;</div>
-          <h3>Shareable Summary Card</h3>
-          <p>Generate a beautiful end-of-day card with your stats. Share it with friends, post it on social, flex your typing day.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Desktop Buddy — Special Feature -->
-  <section class="buddy" id="buddy">
-    <div class="section-inner">
-      <div class="section-label">Desktop Buddy</div>
-      <h2>Meet your typing<br><span class="gradient-text">companion</span></h2>
-      <p class="section-sub">An animated character sits on your desktop and types along with you. The faster you type, the faster it evolves.</p>
-
-      <div class="buddy-grid">
-        <div class="buddy-card">
-          <div class="buddy-emoji">&#129445;</div>
-          <div class="buddy-name">Sloth</div>
-          <div class="buddy-range">0 &ndash; 19 WPM</div>
-          <div class="buddy-desc">Just warming up. Slow and steady.</div>
-        </div>
-        <div class="buddy-card">
-          <div class="buddy-emoji">&#128034;</div>
-          <div class="buddy-name">Turtle</div>
-          <div class="buddy-range">20 &ndash; 39 WPM</div>
-          <div class="buddy-desc">Finding your rhythm. Getting there.</div>
-        </div>
-        <div class="buddy-card buddy-card-active">
-          <div class="buddy-emoji">&#128049;</div>
-          <div class="buddy-name">Cat</div>
-          <div class="buddy-range">40 &ndash; 59 WPM</div>
-          <div class="buddy-desc">Comfortable cruising speed. Nice.</div>
-        </div>
-        <div class="buddy-card">
-          <div class="buddy-emoji">&#128007;</div>
-          <div class="buddy-name">Rabbit</div>
-          <div class="buddy-range">60 &ndash; 89 WPM</div>
-          <div class="buddy-desc">Fast fingers. You're flying now.</div>
-        </div>
-        <div class="buddy-card">
-          <div class="buddy-emoji">&#128006;</div>
-          <div class="buddy-name">Cheetah</div>
-          <div class="buddy-range">90+ WPM</div>
-          <div class="buddy-desc">Blazing speed. Absolute machine.</div>
-        </div>
-      </div>
-
-      <div class="buddy-visual">
-        <div class="buddy-demo">
-          <div class="buddy-demo-char">&#128049;</div>
-          <div class="buddy-demo-typing">
-            <span class="typing-dot"></span>
-            <span class="typing-dot"></span>
-            <span class="typing-dot"></span>
-          </div>
-          <div class="buddy-demo-label">Your buddy types along with you on your desktop</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How it works -->
-  <section class="how" id="how">
-    <div class="section-inner">
-      <div class="section-label">How It Works</div>
-      <h2>Stupid simple.<br><span class="gradient-text">By design.</span></h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-content">
-            <h3>Launch and type</h3>
-            <p>Open Typing Stats once. It sits in your menu bar and quietly counts every keystroke and word. No setup, no configuration.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-content">
-            <h3>Watch your stats grow</h3>
-            <p>Click the menu bar icon anytime to see live WPM, word count, keystroke count, and the 24-hour activity chart. Your desktop buddy evolves as you type faster.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-content">
-            <h3>Share your daily card</h3>
-            <p>At the end of the day, generate a beautiful summary card with fun comparisons. Share it on social media or just admire your output.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Download -->
-  <section class="cta-section" id="download">
-    <div class="section-inner">
-      <div class="cta-card">
-        <h2>Start tracking<br><span class="gradient-text">today</span></h2>
-        <p>Download the Mac app. Free, open source, and private by default.</p>
-
-        <div class="download-buttons">
-          <a href="https://github.com/rijo-george/typing-stats/releases/download/v1.0.0/TypingStats-1.0.0.dmg" class="download-card">
-            <div class="download-icon">&#128187;</div>
-            <div class="download-info">
-              <div class="download-label">Download for</div>
-              <div class="download-platform">macOS</div>
-            </div>
-            <svg class="download-arrow" width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-
-        <div class="data-note">
-          <span>&#128274;</span>
-          <span>All data stays on your Mac. No accounts. No tracking.</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-left">
-        <span class="nav-icon">&#9000;</span>
-        <span>Typing Stats</span>
-      </div>
-      <div class="footer-right">
-        <a href="https://github.com/rijo-george/typing-stats">GitHub</a>
-        <span>&middot;</span>
-        <span>macOS</span>
-        <span>&middot;</span>
-        <span>Menu Bar App</span>
-      </div>
-    </div>
-  </footer>
-
-  <script src="script.js"></script>
 </body>
 </html>
