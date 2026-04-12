@@ -194,7 +194,12 @@ class AppState: ObservableObject {
     @Published var stats = StatsEngine()
 
     private let monitor = KeyboardMonitor()
-    private lazy var floatingWindow = FloatingCharacterWindow(stats: stats)
+    private lazy var floatingWindow: FloatingCharacterWindow = {
+        let w = FloatingCharacterWindow(stats: stats)
+        w.onHide = { [weak self] in self?.showCharacter = false }
+        w.onOpenDashboard = { [weak self] in self?.showDashboard() }
+        return w
+    }()
     private var permissionTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
     private var dashboardWindow: NSWindow?
