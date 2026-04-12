@@ -63,14 +63,18 @@ class StatsEngine: ObservableObject {
     // Streak tracking (continuous typing without >3s gap)
     private var currentStreakStart: Date?
 
+    // Character keystroke counter (excludes backspace, navigation, function keys)
+    private var totalCharKeystrokes: Int = 0
+
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         return f
     }()
 
-    // Keys that don't produce characters — excluded from WPM calculation
+    // Keys that don't produce characters — excluded from WPM and word detection
     private static let nonCharacterKeyCodes: Set<Int64> = [
+        51,                                     // Backspace (Delete)
         53,                                     // Escape
         115, 119, 116, 121,                     // Home, End, Page Up, Page Down
         117,                                    // Forward Delete
@@ -193,12 +197,22 @@ class StatsEngine: ObservableObject {
         // WPM (rolling 60-second window, character keys only)
         if isCharKey {
             recentKeyTimes.append(now)
+            totalCharKeystrokes += 1
         }
         recentKeyTimes = recentKeyTimes.filter { now.timeIntervalSince($0) <= 60 }
-        let wpm = Int(Double(recentKeyTimes.count) / 5.0) // 60s window, avg word = 5 chars
-        currentWPM = wpm
-        if wpm > peakWPM {
-            peakWPM = wpm
+
+        // Use actual elapsed time in the window to avoid under-reporting
+        // during the first 60 seconds. Clamp minimum to 5s to prevent
+        // spiky values from just a few keystrokes.
+        if recentKeyTimes.count >= 2, let first = recentKeyTimes.first {
+            let elapsed = now.timeIntervalSince(first)
+            let windowMinutes = max(5.0, min(60.0, elapsed)) / 60.0
+            let wpm = Int(Double(recentKeyTimes.count) / 5.0 / windowMinutes)
+            currentWPM = wpm
+            if wpm > peakWPM { peakWPM = wpm }
+        } else if recentKeyTimes.count < 2 {
+            // Not enough data for a meaningful rate — keep previous value
+            // (decay timer will zero it after 5s of inactivity)
         }
 
         // Burst WPM (10-second window, character keys only)
@@ -206,9 +220,12 @@ class StatsEngine: ObservableObject {
             burstKeyTimes.append(now)
         }
         burstKeyTimes = burstKeyTimes.filter { now.timeIntervalSince($0) <= 10 }
-        let currentBurst = Int(Double(burstKeyTimes.count) / 5.0 * 6.0) // scale 10s → 60s
-        if currentBurst > burstWPM {
-            burstWPM = currentBurst
+
+        if burstKeyTimes.count >= 2, let first = burstKeyTimes.first {
+            let elapsed = now.timeIntervalSince(first)
+            let windowMinutes = max(3.0, min(10.0, elapsed)) / 60.0
+            let currentBurst = Int(Double(burstKeyTimes.count) / 5.0 / windowMinutes)
+            if currentBurst > burstWPM { burstWPM = currentBurst }
         }
 
         // Auto-save every 100 keystrokes
@@ -240,7 +257,7 @@ class StatsEngine: ObservableObject {
 
     var averageWPM: Int {
         guard activeSeconds >= 10 else { return 0 }
-        return Int((Double(todayKeystrokes) / 5.0) / (activeSeconds / 60.0))
+        return Int((Double(totalCharKeystrokes) / 5.0) / (activeSeconds / 60.0))
     }
 
     var longestStreakFormatted: String {
@@ -355,6 +372,10 @@ class StatsEngine: ObservableObject {
             sessionCount = today.sessionCount ?? 0
             longestStreakSeconds = today.longestStreakSeconds ?? 0
             modifierCounts = today.modifierCounts ?? [:]
+            // Derive character keystroke count from key frequency
+            totalCharKeystrokes = (today.keyFrequency ?? [:])
+                .filter { !Self.nonCharacterKeyCodes.contains(Int64($0.key)) }
+                .values.reduce(0, +)
         }
         weeklyTrend = computeWeeklyTrend(from: history)
     }
@@ -380,6 +401,7 @@ class StatsEngine: ObservableObject {
         interKeyM2 = 0
         burstKeyTimes = []
         currentStreakStart = nil
+        totalCharKeystrokes = 0
         weeklyTrend = computeWeeklyTrend(from: loadHistory())
     }
 
@@ -398,7 +420,16 @@ class StatsEngine: ObservableObject {
 
         func avgWPMFor(_ entry: DailyStats) -> Int {
             guard entry.activeSeconds > 30 else { return 0 }
-            return Int((Double(entry.keystrokes) / 5.0) / (entry.activeSeconds / 60.0))
+            // Use character keystrokes from keyFrequency if available, otherwise fall back to total
+            let charKeys: Int
+            if let freq = entry.keyFrequency {
+                charKeys = freq
+                    .filter { !Self.nonCharacterKeyCodes.contains(Int64($0.key)) }
+                    .values.reduce(0, +)
+            } else {
+                charKeys = entry.keystrokes
+            }
+            return Int((Double(charKeys) / 5.0) / (entry.activeSeconds / 60.0))
         }
 
         let last7 = history.filter {
