@@ -106,7 +106,21 @@ struct MenuContentView: View {
 
             Divider()
 
-            // Share & Quit
+            // Dashboard button
+            Button(action: appState.showDashboard) {
+                HStack {
+                    Label("Open Dashboard", systemImage: "macwindow")
+                        .font(.system(size: 12))
+                    Spacer()
+                }
+            }
+            .buttonStyle(.borderless)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+
+            Divider()
+
+            // Share & Export
             HStack {
                 Button(action: appState.shareCard) {
                     Label("Share", systemImage: "square.and.arrow.up")
@@ -183,6 +197,8 @@ class AppState: ObservableObject {
     private lazy var floatingWindow = FloatingCharacterWindow(stats: stats)
     private var permissionTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
+    private var dashboardWindow: NSWindow?
+    private var onboardingWindow: NSWindow?
 
     init() {
         self.isTracking = UserDefaults.standard.object(forKey: "isTracking") as? Bool ?? true
@@ -214,6 +230,13 @@ class AppState: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             guard let self = self, self.showCharacter else { return }
             self.floatingWindow.show()
+        }
+
+        // Show onboarding on first launch
+        if !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+                self?.showOnboarding()
+            }
         }
     }
 
@@ -289,6 +312,77 @@ class AppState: ObservableObject {
                 print("Failed to export stats: \(error.localizedDescription)")
             }
         }
+    }
+
+    // MARK: - Windows
+
+    @MainActor
+    func showDashboard() {
+        if let existing = dashboardWindow {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let content = DashboardView(stats: stats)
+        let hosting = NSHostingView(rootView: content)
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 720, height: 640),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "Typing Stats"
+        window.titlebarAppearsTransparent = true
+        window.contentView = hosting
+        window.center()
+        window.setFrameAutosaveName("DashboardWindow")
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        // Clean up reference when window closes
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            self?.dashboardWindow = nil
+        }
+
+        self.dashboardWindow = window
+    }
+
+    @MainActor
+    private func showOnboarding() {
+        if onboardingWindow != nil { return }
+
+        let content = OnboardingView(hasAccessibility: Binding(
+            get: { [weak self] in self?.hasAccessibility ?? false },
+            set: { _ in }
+        )) { [weak self] in
+            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            self?.onboardingWindow?.close()
+            self?.onboardingWindow = nil
+        }
+
+        let hosting = NSHostingView(rootView: content)
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 520, height: 440),
+            styleMask: [.titled, .fullSizeContentView],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "Welcome to Typing Stats"
+        window.titlebarAppearsTransparent = true
+        window.isMovableByWindowBackground = true
+        window.contentView = hosting
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        self.onboardingWindow = window
     }
 
     private static let fileDateFormatter: DateFormatter = {

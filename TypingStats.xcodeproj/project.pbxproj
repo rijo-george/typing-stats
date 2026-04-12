@@ -15,6 +15,8 @@
 		A10000060000000000000006 /* TypingCharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000090000000000000009; };
 		A10000070000000000000007 /* FloatingCharacterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000A000000000000010; };
 		A10000080000000000000008 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000B000000000000011; };
+		A10000090000000000000009 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000C000000000000012; };
+		A1000000A000000000000010 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000D000000000000013; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,8 @@
 		A20000090000000000000009 /* TypingCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingCharacterView.swift; sourceTree = "<group>"; };
 		A2000000A000000000000010 /* FloatingCharacterWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingCharacterWindow.swift; sourceTree = "<group>"; };
 		A2000000B000000000000011 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		A2000000C000000000000012 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		A2000000D000000000000013 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,8 @@
 				A20000090000000000000009 /* TypingCharacterView.swift */,
 				A2000000A000000000000010 /* FloatingCharacterWindow.swift */,
 				A2000000B000000000000011 /* AnalyticsView.swift */,
+				A2000000C000000000000012 /* OnboardingView.swift */,
+				A2000000D000000000000013 /* DashboardView.swift */,
 				A20000050000000000000005 /* Assets.xcassets */,
 				A20000060000000000000006 /* TypingStats.entitlements */,
 				A20000070000000000000007 /* Info.plist */,
@@ -151,6 +157,8 @@
 				A10000060000000000000006 /* TypingCharacterView.swift in Sources */,
 				A10000070000000000000007 /* FloatingCharacterWindow.swift in Sources */,
 				A10000080000000000000008 /* AnalyticsView.swift in Sources */,
+				A10000090000000000000009 /* OnboardingView.swift in Sources */,
+				A1000000A000000000000010 /* DashboardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
