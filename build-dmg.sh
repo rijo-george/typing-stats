@@ -11,8 +11,8 @@ DMG_FINAL="$SCRIPT_DIR/$DMG_NAME-$VERSION.dmg"
 DMG_TEMP="$SCRIPT_DIR/_dmg_temp.dmg"
 STAGING="$SCRIPT_DIR/_dmg_staging"
 
-SIGN_IDENTITY="Developer ID Application: RIJO GEORGE (K8383Q54VB)"
-TEAM_ID="K8383Q54VB"
+SIGN_IDENTITY="${SIGN_IDENTITY:-Developer ID Application: RIJO GEORGE (K8383Q54VB)}"
+TEAM_ID="${TEAM_ID:-K8383Q54VB}"
 
 echo "==> Building and signing app..."
 bash build-app.sh

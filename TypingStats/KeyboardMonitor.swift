@@ -12,16 +12,18 @@ class KeyboardMonitor {
         let mask: CGEventMask = (1 << CGEventType.keyDown.rawValue)
 
         let callback: CGEventTapCallBack = { proxy, type, event, refcon in
+            guard let refcon = refcon else { return Unmanaged.passUnretained(event) }
+            let monitor = Unmanaged<KeyboardMonitor>.fromOpaque(refcon).takeUnretainedValue()
+
             if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-                if let tap = refcon {
-                    CGEvent.tapEnable(tap: Unmanaged<CFMachPort>.fromOpaque(tap).takeUnretainedValue(), enable: true)
+                if let tap = monitor.eventTap {
+                    CGEvent.tapEnable(tap: tap, enable: true)
                 }
                 return Unmanaged.passUnretained(event)
             }
 
             if type == .keyDown {
                 let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-                let monitor = Unmanaged<KeyboardMonitor>.fromOpaque(refcon!).takeUnretainedValue()
                 DispatchQueue.main.async {
                     monitor.onKeyDown?(keyCode)
                 }

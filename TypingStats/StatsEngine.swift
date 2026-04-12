@@ -19,7 +19,7 @@ class StatsEngine: ObservableObject {
 
     private var recentKeyTimes: [Date] = []
     private var lastKeyTime: Date?
-    private var wordBuffer: String = ""
+    private var hasPartialWord: Bool = false
     private var currentDateString: String = ""
     private var activeTimer: Timer?
 
@@ -28,6 +28,18 @@ class StatsEngine: ObservableObject {
         f.dateFormat = "yyyy-MM-dd"
         return f
     }()
+
+    // Keys that don't produce characters — excluded from WPM calculation
+    private static let nonCharacterKeyCodes: Set<Int64> = [
+        53,                                     // Escape
+        115, 119, 116, 121,                     // Home, End, Page Up, Page Down
+        117,                                    // Forward Delete
+        114,                                    // Help/Insert
+        123, 124, 125, 126,                     // Arrow keys
+        122, 120, 99, 118, 96, 97, 98, 100,    // F1–F8
+        101, 109, 103, 111, 105, 107, 113,      // F9–F15
+        106, 64, 79, 80, 90,                    // F16–F20
+    ]
 
     init() {
         currentDateString = Self.dateFormatter.string(from: Date())
@@ -53,27 +65,30 @@ class StatsEngine: ObservableObject {
         keystrokesPerHour[hour, default: 0] += 1
 
         // Track active typing time (count if last key was within 5 seconds)
-        if let last = lastKeyTime, now.timeIntervalSince(last) <= 5 {
-            activeSeconds += now.timeIntervalSince(last)
+        if let last = lastKeyTime {
+            let delta = now.timeIntervalSince(last)
+            if delta > 0 && delta <= 5 {
+                activeSeconds += delta
+            }
         }
         lastKeyTime = now
 
         // Word detection: space (49), return (36), tab (48)
         if keyCode == 49 || keyCode == 36 || keyCode == 48 {
-            if !wordBuffer.isEmpty {
+            if hasPartialWord {
                 todayWords += 1
-                wordBuffer = ""
+                hasPartialWord = false
             }
-        } else {
-            wordBuffer += "x" // We just need to know something was typed
+        } else if !Self.nonCharacterKeyCodes.contains(keyCode) {
+            hasPartialWord = true
         }
 
-        // WPM calculation (rolling 60-second window)
-        recentKeyTimes.append(now)
+        // WPM calculation (rolling 60-second window, character keys only)
+        if !Self.nonCharacterKeyCodes.contains(keyCode) {
+            recentKeyTimes.append(now)
+        }
         recentKeyTimes = recentKeyTimes.filter { now.timeIntervalSince($0) <= 60 }
-        let charsInWindow = recentKeyTimes.count
-        // Average word = 5 characters
-        let wpm = Int(Double(charsInWindow) / 5.0 * 1.0) // already per minute since window is 60s
+        let wpm = Int(Double(recentKeyTimes.count) / 5.0) // 60s window, avg word = 5 chars
         currentWPM = wpm
         if wpm > peakWPM {
             peakWPM = wpm
@@ -138,13 +153,16 @@ class StatsEngine: ObservableObject {
         } else {
             history.append(today)
         }
-        // Keep last 90 days
+        // Keep last 90 days (yyyy-MM-dd format sorts lexicographically == chronologically)
         let cutoff = Calendar.current.date(byAdding: .day, value: -90, to: Date())!
         let cutoffStr = Self.dateFormatter.string(from: cutoff)
         history = history.filter { $0.date >= cutoffStr }
 
-        if let data = try? JSONEncoder().encode(history) {
-            try? data.write(to: statsFileURL)
+        do {
+            let data = try JSONEncoder().encode(history)
+            try data.write(to: statsFileURL)
+        } catch {
+            print("Failed to save typing stats: \(error.localizedDescription)")
         }
     }
 
@@ -176,11 +194,13 @@ class StatsEngine: ObservableObject {
         keystrokesPerHour = [:]
         recentKeyTimes = []
         lastKeyTime = nil
-        wordBuffer = ""
+        hasPartialWord = false
     }
 
     private func startActiveTimer() {
-        // Decay currentWPM when not typing
+        // Decay currentWPM when not typing.
+        // Timer is scheduled on the main run loop (init runs on main thread),
+        // so the callback executes on the main thread alongside recordKeystroke.
         activeTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             if let last = self.lastKeyTime, Date().timeIntervalSince(last) > 5 {

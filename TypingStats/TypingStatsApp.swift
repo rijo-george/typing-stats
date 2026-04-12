@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import ServiceManagement
 
 @main
 struct TypingStatsApp: App {
@@ -52,6 +53,17 @@ struct MenuContentView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 10)
 
+            HStack {
+                Toggle(isOn: $appState.launchAtLogin) {
+                    Label("Launch at Login", systemImage: "sunrise")
+                        .font(.system(size: 13, weight: .medium))
+                }
+                .toggleStyle(.switch)
+                .controlSize(.small)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 10)
+
             if !appState.hasAccessibility {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
@@ -91,8 +103,8 @@ struct MenuContentView: View {
 
                 Spacer()
 
-                Button(action: { appState.stats.saveToDisk() }) {
-                    Label("Save", systemImage: "arrow.down.doc")
+                Button(action: appState.exportStats) {
+                    Label("Export", systemImage: "arrow.down.doc")
                         .font(.system(size: 12))
                 }
                 .buttonStyle(.borderless)
@@ -125,16 +137,30 @@ struct MenuContentView: View {
 }
 
 class AppState: ObservableObject {
-    @Published var isTracking: Bool {
+    private var didFinishInit = false
+
+    @Published var isTracking: Bool = true {
         didSet {
+            guard didFinishInit else { return }
             UserDefaults.standard.set(isTracking, forKey: "isTracking")
             isTracking ? monitor.start() : monitor.stop()
         }
     }
-    @Published var showCharacter: Bool {
+    @Published var showCharacter: Bool = true {
         didSet {
+            guard didFinishInit else { return }
             UserDefaults.standard.set(showCharacter, forKey: "showCharacter")
             showCharacter ? floatingWindow.show() : floatingWindow.hide()
+        }
+    }
+    @Published var launchAtLogin: Bool = false {
+        didSet {
+            guard didFinishInit else { return }
+            if launchAtLogin {
+                try? SMAppService.mainApp.register()
+            } else {
+                try? SMAppService.mainApp.unregister()
+            }
         }
     }
     @Published var hasAccessibility: Bool = false
@@ -146,9 +172,9 @@ class AppState: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        let saved = UserDefaults.standard.object(forKey: "isTracking") as? Bool ?? true
-        self.isTracking = saved
+        self.isTracking = UserDefaults.standard.object(forKey: "isTracking") as? Bool ?? true
         self.showCharacter = UserDefaults.standard.object(forKey: "showCharacter") as? Bool ?? true
+        self.launchAtLogin = SMAppService.mainApp.status == .enabled
 
         checkAccessibility()
         permissionTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
@@ -164,6 +190,8 @@ class AppState: ObservableObject {
         stats.objectWillChange.sink { [weak self] in
             self?.objectWillChange.send()
         }.store(in: &cancellables)
+
+        didFinishInit = true
 
         if isTracking {
             monitor.start()
@@ -226,6 +254,26 @@ class AppState: ObservableObject {
                    let png = bitmap.representation(using: .png, properties: [:]) {
                     try? png.write(to: url)
                 }
+            }
+        }
+    }
+
+    @MainActor
+    func exportStats() {
+        stats.saveToDisk()
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.json]
+        panel.nameFieldStringValue = "typing-stats-\(Self.fileDateFormatter.string(from: Date())).json"
+        panel.begin { [weak self] response in
+            guard response == .OK, let url = panel.url, let self = self else { return }
+            let history = self.stats.loadHistory()
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            do {
+                let data = try encoder.encode(history)
+                try data.write(to: url)
+            } catch {
+                print("Failed to export stats: \(error.localizedDescription)")
             }
         }
     }

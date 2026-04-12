@@ -4,8 +4,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-SIGN_IDENTITY="Developer ID Application: RIJO GEORGE (K8383Q54VB)"
-TEAM_ID="K8383Q54VB"
+SIGN_IDENTITY="${SIGN_IDENTITY:-Developer ID Application: RIJO GEORGE (K8383Q54VB)}"
+TEAM_ID="${TEAM_ID:-K8383Q54VB}"
 SCHEME="TypingStats"
 PROJECT="TypingStats.xcodeproj"
 

@@ -1,5 +1,11 @@
 import SwiftUI
 
+private let decimalFormatter: NumberFormatter = {
+    let f = NumberFormatter()
+    f.numberStyle = .decimal
+    return f
+}()
+
 struct SummaryView: View {
     let keystrokes: Int
     let words: Int
@@ -65,18 +71,14 @@ struct SummaryView: View {
     }
 
     private var formattedWords: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: words)) ?? "\(words)"
+        decimalFormatter.string(from: NSNumber(value: words)) ?? "\(words)"
     }
 
     private var formattedKeystrokes: String {
         if keystrokes >= 10000 {
             return "\(keystrokes / 1000)k"
         }
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: keystrokes)) ?? "\(keystrokes)"
+        return decimalFormatter.string(from: NSNumber(value: keystrokes)) ?? "\(keystrokes)"
     }
 }
 
@@ -179,14 +181,10 @@ struct ShareableCard: View {
     }
 
     private var formattedWords: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: words)) ?? "\(words)"
+        decimalFormatter.string(from: NSNumber(value: words)) ?? "\(words)"
     }
 
     private var formattedKeystrokes: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: keystrokes)) ?? "\(keystrokes)"
+        decimalFormatter.string(from: NSNumber(value: keystrokes)) ?? "\(keystrokes)"
     }
 }
