@@ -26,6 +26,7 @@ struct TypingStatsApp: App {
 
 struct MenuContentView: View {
     @EnvironmentObject var appState: AppState
+    @State private var selectedTab = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -79,17 +80,29 @@ struct MenuContentView: View {
 
             Divider()
 
-            // Summary card
-            SummaryView(
-                keystrokes: appState.stats.todayKeystrokes,
-                words: appState.stats.todayWords,
-                peakWPM: appState.stats.peakWPM,
-                activeTime: appState.stats.activeTimeFormatted,
-                comparison: appState.stats.funComparison,
-                currentWPM: appState.stats.currentWPM,
-                isTyping: appState.stats.currentWPM > 0,
-                keystrokesPerHour: appState.stats.keystrokesPerHour
-            )
+            // Tab picker
+            Picker("", selection: $selectedTab) {
+                Text("Today").tag(0)
+                Text("Deep").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+
+            if selectedTab == 0 {
+                SummaryView(
+                    keystrokes: appState.stats.todayKeystrokes,
+                    words: appState.stats.todayWords,
+                    peakWPM: appState.stats.peakWPM,
+                    activeTime: appState.stats.activeTimeFormatted,
+                    comparison: appState.stats.funComparison,
+                    currentWPM: appState.stats.currentWPM,
+                    isTyping: appState.stats.currentWPM > 0,
+                    keystrokesPerHour: appState.stats.keystrokesPerHour
+                )
+            } else {
+                AnalyticsView(stats: appState.stats)
+            }
 
             Divider()
 
@@ -181,8 +194,8 @@ class AppState: ObservableObject {
             self?.checkAccessibility()
         }
 
-        monitor.onKeyDown = { [weak self] keyCode in
-            self?.stats.recordKeystroke(keyCode: keyCode)
+        monitor.onKeyDown = { [weak self] keyCode, flags in
+            self?.stats.recordKeystroke(keyCode: keyCode, modifierFlags: flags)
             self?.objectWillChange.send()
         }
 

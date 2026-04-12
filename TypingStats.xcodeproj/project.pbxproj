@@ -14,6 +14,7 @@
 		A10000050000000000000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000050000000000000005; };
 		A10000060000000000000006 /* TypingCharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000090000000000000009; };
 		A10000070000000000000007 /* FloatingCharacterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000A000000000000010; };
+		A10000080000000000000008 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000B000000000000011; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		A20000080000000000000008 /* Typing Stats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Typing Stats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000090000000000000009 /* TypingCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingCharacterView.swift; sourceTree = "<group>"; };
 		A2000000A000000000000010 /* FloatingCharacterWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingCharacterWindow.swift; sourceTree = "<group>"; };
+		A2000000B000000000000011 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 				A20000040000000000000004 /* SummaryView.swift */,
 				A20000090000000000000009 /* TypingCharacterView.swift */,
 				A2000000A000000000000010 /* FloatingCharacterWindow.swift */,
+				A2000000B000000000000011 /* AnalyticsView.swift */,
 				A20000050000000000000005 /* Assets.xcassets */,
 				A20000060000000000000006 /* TypingStats.entitlements */,
 				A20000070000000000000007 /* Info.plist */,
@@ -147,6 +150,7 @@
 				A10000040000000000000004 /* SummaryView.swift in Sources */,
 				A10000060000000000000006 /* TypingCharacterView.swift in Sources */,
 				A10000070000000000000007 /* FloatingCharacterWindow.swift in Sources */,
+				A10000080000000000000008 /* AnalyticsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

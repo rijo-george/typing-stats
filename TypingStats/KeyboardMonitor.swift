@@ -1,7 +1,7 @@
 import Cocoa
 
 class KeyboardMonitor {
-    var onKeyDown: ((Int64) -> Void)?
+    var onKeyDown: ((Int64, CGEventFlags) -> Void)?
 
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
@@ -24,8 +24,9 @@ class KeyboardMonitor {
 
             if type == .keyDown {
                 let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+                let flags = event.flags
                 DispatchQueue.main.async {
-                    monitor.onKeyDown?(keyCode)
+                    monitor.onKeyDown?(keyCode, flags)
                 }
             }
             return Unmanaged.passUnretained(event)
